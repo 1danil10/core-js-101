@@ -41,8 +41,6 @@ function getJSON(obj) {
   return JSON.stringify(obj);
 }
 
-
-
 /**
  * Returns the object of specified type from JSON representation
  *
