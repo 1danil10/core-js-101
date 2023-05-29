@@ -482,8 +482,158 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+const checkColumnTopToBottom = (position, cellRowIndex, cellColIndex, winLength) => {
+  const estimatedPositionLength = cellRowIndex + winLength;
+
+  if (estimatedPositionLength > position.length) {
+    return false;
+  }
+
+  const char = position[cellRowIndex][cellColIndex];
+  let count = 1;
+
+  for (let rowIndex = cellRowIndex + 1; rowIndex < winLength; rowIndex += 1) {
+    const currentChar = position[rowIndex][cellColIndex];
+    if (char !== currentChar) {
+      return false;
+    }
+
+    count += 1;
+  }
+
+
+  return count === winLength;
+};
+
+
+const checkRowLeftToRight = (position, cellRowIndex, cellColIndex, winLength) => {
+  const estimatedRowLength = cellColIndex + winLength;
+
+  const row = position[cellRowIndex];
+
+  if (estimatedRowLength > row.length) {
+    return false;
+  }
+
+  const char = position[cellRowIndex][cellColIndex];
+  let count = 1;
+
+  for (let colIndex = cellColIndex + 1; colIndex < estimatedRowLength; colIndex += 1) {
+    const currentChar = row[colIndex];
+    if (char !== currentChar) {
+      return false;
+    }
+
+    count += 1;
+  }
+
+  return count === winLength;
+};
+
+const checkDiagonalTopRightToBottomLeft = (position, cellRowIndex, cellColIndex, winLength) => {
+  const estimatedLastCellColIndex = cellColIndex - winLength + 1;
+
+  if (estimatedLastCellColIndex < 0) {
+    return false;
+  }
+
+  const estimatedPositionLength = cellRowIndex + winLength;
+
+  if (estimatedPositionLength > position.length) {
+    return false;
+  }
+
+  const char = position[cellRowIndex][cellColIndex];
+  let count = 1;
+
+  for (let rowIndex = cellRowIndex + 1, colIndex = cellColIndex - 1;
+    rowIndex < estimatedPositionLength;) {
+    const currentChar = position[rowIndex][colIndex];
+
+    if (char !== currentChar) {
+      return false;
+    }
+
+    count += 1;
+    rowIndex += 1;
+    colIndex -= 1;
+  }
+
+  return count === winLength;
+};
+
+const checkDiagonalTopLeftToBottomRight = (position, cellRowIndex, cellColIndex, winLength) => {
+  const estimatedLastCellColIndex = cellColIndex + winLength - 1;
+
+  const estimatedLastRow = position[cellRowIndex + winLength - 1];
+
+  if (!estimatedLastRow || estimatedLastRow.length < estimatedLastCellColIndex) {
+    return false;
+  }
+
+  const estimatedPositionLength = cellRowIndex + winLength;
+
+  if (estimatedPositionLength > position.length) {
+    return false;
+  }
+
+  const char = position[cellRowIndex][cellColIndex];
+  let count = 1;
+
+  for (let rowIndex = cellRowIndex + 1, colIndex = cellColIndex + 1;
+    rowIndex < estimatedPositionLength;) {
+    const currentChar = position[rowIndex][colIndex];
+
+    if (char !== currentChar) {
+      return false;
+    }
+
+    count += 1;
+    rowIndex += 1;
+    colIndex += 1;
+  }
+
+  return count === winLength;
+};
+
+
+const checkCell = (position, cellRowIndex, cellColIndex, winLength) => {
+  if (checkColumnTopToBottom(position, cellRowIndex, cellColIndex, winLength)) {
+    return true;
+  }
+
+  if (checkRowLeftToRight(position, cellRowIndex, cellColIndex, winLength)) {
+    return true;
+  }
+
+  if (checkDiagonalTopLeftToBottomRight(position, cellRowIndex, cellColIndex, winLength)) {
+    return true;
+  }
+
+  if (checkDiagonalTopRightToBottomLeft(position, cellRowIndex, cellColIndex, winLength)) {
+    return true;
+  }
+
+  return false;
+};
+
+
+function evaluateTicTacToePosition(position) {
+  const winLength = 3;
+
+  for (let rowIndex = 0; rowIndex < position.length; rowIndex += 1) {
+    for (let colIndex = 0; colIndex < position[rowIndex].length; colIndex += 1) {
+      if (position[rowIndex][colIndex]) {
+        const isWin = checkCell(position, rowIndex, colIndex, winLength);
+
+        if (isWin) {
+          return position[rowIndex][colIndex];
+        }
+      }
+    }
+  }
+
+  return undefined;
 }
 
 
